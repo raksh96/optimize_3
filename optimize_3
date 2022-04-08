@@ -1,0 +1,59 @@
+import json
+
+
+def convert_to_json(csv_file: str, json_file: str):
+    """
+    This function converts a csv file to corresponding json file
+    with the given rules
+
+    The top element in the JSON file should be an Array.
+    Each ROW of the CSV file represents an object to be added into the array.
+    a. Each column header should be used as the JSON property key
+    b. Each field CSV field value should be used as the JSON property value
+    c. IF the value is empty, the property should be skipped.
+    
+    
+    :param csv_file: str representing the name of the csv file
+    :param json_file: str representing the name of the json file
+    :return: None
+    """
+    
+    # will hold the json data
+    json_data = []
+    with open(csv_file, 'r') as csv_p:
+        # split the data into lines
+        data = csv_p.read().splitlines()
+        
+        # first line contains the headers
+        headers = data[0].split(',')
+        
+        # rest line contain data so iterate through them
+        for line in data[1:]:
+            # split by ,
+            elements = line.split(',')
+            # current dict
+            current_json_entry = {}
+            for i in range(len(headers)):
+                # if the element is not empty then add the corresponding
+                # header-value to the dictionary else ignore
+                if elements[i] != '':
+                    current_json_entry[headers[i]] = elements[i]
+            # finally add the dictionary to the json data list
+            json_data.append(current_json_entry)
+
+    # now generate the json file
+    json_object = json.dumps(json_data)
+
+    # writing to the json file
+    with open(f'{json_file}', 'w+') as json_p:
+        json_p.write(json_object)
+
+
+# SAMPLE console check
+if __name__ == '__main__':
+    csv_f = input('Enter the name of the csv file: ')
+    json_f = input('Enter the name of the json file: ')
+
+    print('Processing')
+    convert_to_json(csv_f, json_f)
+    print('Done!')
